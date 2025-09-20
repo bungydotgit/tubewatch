@@ -32,7 +32,7 @@ function InnerApp() {
   if (auth.isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        Loading...
+        <span className="loading loading-spinner loading-xl text-accent"></span>
       </div>
     );
   }

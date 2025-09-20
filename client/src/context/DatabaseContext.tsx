@@ -1,5 +1,5 @@
 import { partySchema, userSchema } from "@/db/schemas";
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 import { createRxDatabase, type RxDatabase } from "rxdb";
 import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
 
@@ -12,7 +12,7 @@ const DatabaseContext = createContext<DatabaseContextType | undefined>(
   undefined,
 );
 
-const useRxDb = () => {
+export const useRxDb = () => {
   const context = useContext(DatabaseContext);
   if (!context) {
     throw new Error("useRxDb must be used within an RxDbProvider");
@@ -25,7 +25,7 @@ interface Proptype {
   children: React.ReactNode;
 }
 
-const RxDbProvider = ({ children }: Proptype) => {
+export const RxDbProvider = ({ children }: Proptype) => {
   const [db, setDb] = useState<RxDatabase | null>(null);
   const [initializing, setIsInitializing] = useState(true);
 
@@ -65,5 +65,3 @@ const RxDbProvider = ({ children }: Proptype) => {
     </DatabaseContext>
   );
 };
-
-export { DatabaseContext, RxDbProvider };

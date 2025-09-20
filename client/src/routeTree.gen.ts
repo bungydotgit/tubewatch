@@ -11,8 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignInRouteImport } from './routes/sign-in'
-import { Route as JoinRouteImport } from './routes/join'
-import { Route as HostRouteImport } from './routes/host'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WatchRoomIdRouteImport } from './routes/watch/$roomId'
@@ -27,14 +26,9 @@ const SignInRoute = SignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
-const JoinRoute = JoinRouteImport.update({
-  id: '/join',
-  path: '/join',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HostRoute = HostRouteImport.update({
-  id: '/host',
-  path: '/host',
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -56,8 +50,7 @@ const WatchRoomIdRoute = WatchRoomIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/host': typeof HostRoute
-  '/join': typeof JoinRoute
+  '/app': typeof AppRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/watch/$roomId': typeof WatchRoomIdRoute
@@ -65,8 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/host': typeof HostRoute
-  '/join': typeof JoinRoute
+  '/app': typeof AppRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/watch/$roomId': typeof WatchRoomIdRoute
@@ -75,8 +67,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/host': typeof HostRoute
-  '/join': typeof JoinRoute
+  '/app': typeof AppRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/watch/$roomId': typeof WatchRoomIdRoute
@@ -86,26 +77,17 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
-    | '/host'
-    | '/join'
+    | '/app'
     | '/sign-in'
     | '/sign-up'
     | '/watch/$roomId'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/about'
-    | '/host'
-    | '/join'
-    | '/sign-in'
-    | '/sign-up'
-    | '/watch/$roomId'
+  to: '/' | '/about' | '/app' | '/sign-in' | '/sign-up' | '/watch/$roomId'
   id:
     | '__root__'
     | '/'
     | '/about'
-    | '/host'
-    | '/join'
+    | '/app'
     | '/sign-in'
     | '/sign-up'
     | '/watch/$roomId'
@@ -114,8 +96,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  HostRoute: typeof HostRoute
-  JoinRoute: typeof JoinRoute
+  AppRoute: typeof AppRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
   WatchRoomIdRoute: typeof WatchRoomIdRoute
@@ -137,18 +118,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignInRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/join': {
-      id: '/join'
-      path: '/join'
-      fullPath: '/join'
-      preLoaderRoute: typeof JoinRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/host': {
-      id: '/host'
-      path: '/host'
-      fullPath: '/host'
-      preLoaderRoute: typeof HostRouteImport
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -178,8 +152,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  HostRoute: HostRoute,
-  JoinRoute: JoinRoute,
+  AppRoute: AppRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
   WatchRoomIdRoute: WatchRoomIdRoute,

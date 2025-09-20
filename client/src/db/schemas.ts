@@ -9,50 +9,27 @@ export const partySchemaLiteral = {
   primaryKey: "id",
   type: "object",
   properties: {
-    id: {
-      type: "string",
-      maxLength: 100,
+    id: { type: "string", maxLength: 100 },
+    videoUrl: { type: "string" },
+    ownerId: { type: "string" },
+    currentVideoState: {
+      type: "object",
+      properties: {
+        playbackPosition: { type: "number" },
+        isPaused: { type: "boolean" },
+        lastUpdatedBy: { type: "string" },
+        isSeeking: { type: "boolean" },
+      },
+      required: ["playbackPosition", "isPaused", "lastUpdatedBy", "isSeeking"],
     },
-
-    videoUrl: {
-      type: "string",
-      ownerId: { type: "string" },
-
-      currentVideoState: {
-        type: "object",
-
-        properties: {
-          playbackPosition: {
-            type: "number",
-          },
-
-          isPaused: { type: "boolean" },
-          lastUpdatedBy: { type: "string" },
-          isSeeking: { type: "boolean" },
-        },
-      },
-
-      lastUpdated: {
-        type: "number",
-      },
-
-      members: {
-        type: "array",
-        items: {
-          type: "string",
-        },
-      },
-
-      required: [
-        "id",
-        "videoUrl",
-        "ownerId",
-        "currentVideoState",
-        "lastUpdated",
-      ],
-      indexes: ["lastUpdated"],
+    lastUpdated: { type: "number" },
+    members: {
+      type: "array",
+      items: { type: "string" },
     },
   },
+  required: ["id", "videoUrl", "ownerId", "currentVideoState", "lastUpdated"],
+  indexes: ["lastUpdated"],
 } as const;
 
 export const userProfileSchemaLiteral = {

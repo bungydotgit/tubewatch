@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.47.0",
+    "@clerk/themes": "^2.4.19",
     "@tailwindcss/vite": "^4.0.6",
     "@tanstack/react-devtools": "^0.2.2",
     "@tanstack/react-router": "^1.130.2",
@@ -19,6 +20,7 @@
     "nanoid": "^5.1.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-player": "^3.3.3",
     "rxdb": "^16.19.0",
     "rxjs": "^7.8.2",
     "tailwindcss": "^4.0.6"
@@ -29,6 +31,7 @@
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
+    "daisyui": "^5.1.13",
     "jsdom": "^26.0.0",
     "typescript": "^5.7.2",
     "vite": "^6.3.5",
