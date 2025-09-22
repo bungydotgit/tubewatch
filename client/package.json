@@ -21,9 +21,9 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-player": "^3.3.3",
-    "rxdb": "^16.19.0",
-    "rxjs": "^7.8.2",
-    "tailwindcss": "^4.0.6"
+    "socket.io-client": "^4.8.1",
+    "tailwindcss": "^4.0.6",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",

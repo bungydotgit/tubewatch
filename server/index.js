@@ -1,21 +1,21 @@
-import { startSignalingServerSimplePeer } from "rxdb/plugins/replication-webrtc";
 import express from "express";
-import http from "node:http";
-import cors from "cors";
+import { Server } from "socket.io";
+import dotenv from "dotenv";
 
 const app = express();
-const server = http.createServer(app);
-
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-  }),
-);
-
-const serverState = await startSignalingServerSimplePeer({
-  server,
+const io = new Server(app, {
+  cors: {
+    origin: "*",
+  },
 });
+dotenv.config();
 
-server.listen(8081, () => {
-  console.log("Signaling server listening to port 8081");
+const PORT = process.env.PORT || 8081;
+
+app.listen(8081, (error) => {
+  if (!error) {
+    console.log(`Websocket server listening on port: ${PORT}`);
+  } else {
+    console.log();
+  }
 });
