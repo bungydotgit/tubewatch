@@ -60,6 +60,16 @@ export class RoomStore {
     return null;
   }
 
+  setVideoURL(roomId: string, videoURL: string) {
+    const room = this.getRoom(roomId);
+    if (room) {
+      room.videoURL = videoURL;
+      this.rooms.set(roomId, room);
+    } else {
+      throw new Error("Room Not found");
+    }
+  }
+
   getRoom(roomId: string) {
     return this.rooms.get(roomId);
   }
@@ -89,16 +99,4 @@ export class RoomStore {
       }
     }
   }
-
-  /*
-  -- TODOS --
-    - addRoom(roomId, videoId)
-    - addUser(roomId, socketId, username)
-    - removeUser(socketId)
-    - getRoom(roomId)
-    - getUser(userId)
-    - removeRoom(roomId)
-    getUserList(roomId)
-    showInfo()
-  */
 }

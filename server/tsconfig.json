@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ES2022", // Or a later ECMAScript version
-    "module": "NodeNext", // esnext" if using ES Modules
-    "outDir": "./dist", // Output directory for compiled JavaScript
-    "rootDir": "./src", // Root directory for TypeScript source files
-    "strict": true, // Enable all strict type-checking options
-    "esModuleInterop": true, // Enable interoperability between CommonJS and ES Modules
-    "skipLibCheck": true, // Skip type checking of declaration files
-    "forceConsistentCasingInFileNames": true, // Disallow inconsistent casing in file names
+    "target": "ES2022",
+    "module": "NodeNext",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "moduleResolution": "nodenext"
   },
-  "include": ["src/**/*"], // Include all files in the src directory
-  "exclude": ["node_modules", "dist"] // Exclude these directories from compilation
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
