@@ -1,7 +1,10 @@
-export default function initializeSocket(io) {
+import type { Server, Socket } from "socket.io";
+import { RoomStore } from "../store/roomStore.js";
+
+export default function initializeSocket(io: Server) {
   const roomStore = new RoomStore();
 
-  io.on("connection", (socket) => {
+  io.on("connection", (socket: Socket) => {
     console.log(`A user connected: ${socket.id}`);
 
     // roomHandler(io, socket, roomStore)
