@@ -8,6 +8,9 @@ export function ClerkWrapper({ children }: { children: React.ReactNode }) {
         baseTheme: dark,
       }}
       publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}
+      afterSignOutUrl="/"
+      signUpFallbackRedirectUrl="/app"
+      signInFallbackRedirectUrl="/app"
     >
       {children}
     </ClerkProvider>
@@ -22,11 +25,11 @@ export function useClerkAuth() {
     isAuthenticated: isSignedIn,
     user: user
       ? {
-        id: user.id,
-        username:
-          user.username || user.primaryEmailAddress?.emailAddress || "",
-        email: user.primaryEmailAddress?.emailAddress || "",
-      }
+          id: user.id,
+          username:
+            user.username || user.primaryEmailAddress?.emailAddress || "",
+          email: user.primaryEmailAddress?.emailAddress || "",
+        }
       : null,
     isLoading: !isLoaded,
     login: () => {
