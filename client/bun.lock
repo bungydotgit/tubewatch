@@ -17,6 +17,7 @@
         "react-player": "^3.3.3",
         "socket.io-client": "^4.8.1",
         "tailwindcss": "^4.0.6",
+        "uuid": "^13.0.0",
         "zustand": "^5.0.8",
       },
       "devDependencies": {
@@ -726,6 +727,8 @@
     "update-browserslist-db": ["update-browserslist-db@1.1.3", "", { "dependencies": { "escalade": "^3.2.0", "picocolors": "^1.1.1" }, "peerDependencies": { "browserslist": ">= 4.21.0" }, "bin": { "update-browserslist-db": "cli.js" } }, "sha512-UxhIZQ+QInVdunkDAaiazvvT/+fXL5Osr0JZlJulepYu6Jd7qJtDZjlur0emRlT71EN3ScPoE7gvsuIKKNavKw=="],
 
     "use-sync-external-store": ["use-sync-external-store@1.5.0", "", { "peerDependencies": { "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0" } }, "sha512-Rb46I4cGGVBmjamjphe8L/UnvJD+uPPtTkNvX5mZgqdbavhI4EbgIWJiIHXJ8bc/i9EQGPRh4DwEURJ552Do0A=="],
+
+    "uuid": ["uuid@13.0.0", "", { "bin": { "uuid": "dist-node/bin/uuid" } }, "sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w=="],
 
     "vimeo-video-element": ["vimeo-video-element@1.5.5", "", { "dependencies": { "@vimeo/player": "2.29.0" } }, "sha512-9QVvKPPnubMNeNYHY5KZqAYerVMuVG+7PSK+6IrEUD7a/wnCGtzb8Sfxl9qNxDAL6Q8i+p+5SDoVKobCd866vw=="],
 

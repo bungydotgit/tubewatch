@@ -1,6 +1,16 @@
 import { useParams } from "@tanstack/react-router";
 
-export const RoomLayout = ({ videoPlayer }: any) => {
+interface RoomLayoutProps {
+  videoPlayer: React.ReactNode;
+  usersList: React.ReactNode;
+  chat: React.ReactNode;
+}
+
+export const RoomLayout = ({
+  videoPlayer,
+  usersList,
+  chat,
+}: RoomLayoutProps) => {
   const roomId = useParams({
     from: "/watch/$roomId",
     select: (params) => params.roomId,
@@ -29,27 +39,14 @@ export const RoomLayout = ({ videoPlayer }: any) => {
         {/* Members Sidebar */}
         <div className="rounded-lg bg-base-300 col-span-2 min-h-0 flex flex-col">
           <div className="py-4 px-6 flex-1 min-h-0 overflow-hidden">
-            <div className="flex flex-col gap-4 h-full overflow-y-auto">
-              {Array.from(new Array(20)).map((_, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between rounded-md bg-base-100 px-3 py-2 flex-shrink-0"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="rounded-full h-2 w-2 bg-green-500"></div>
-                    <div className="flex gap-2 items-center">
-                      <p>adwait</p>
-                      <div className="badge badge-soft badge-primary">Host</div>
-                    </div>
-                  </div>
-                  <div className="relative z-10 h-full right-0 top-0 bg-gradient-to-r from-transparent to-base-100">
-                    <button className="btn btn-sm btn-error">Kick</button>
-                  </div>
-                </div>
-              ))}
-            </div>
+            // Users list component
+            {usersList}
           </div>
         </div>
+      </div>
+
+      <div className="bg-base-300 py-4 px-6">
+        {chat || <p>Chat component</p>}
       </div>
     </div>
   );

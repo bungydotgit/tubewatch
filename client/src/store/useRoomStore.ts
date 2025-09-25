@@ -4,7 +4,7 @@ interface RoomState {
   isConnected: boolean;
   roomId: string | null;
   hostId: string | null;
-  users: { id: string; username: string }[];
+  users: { socketId: string; username: string }[];
   messages: any[];
   videoURL: string | null;
   isPlaying: boolean;
@@ -18,11 +18,14 @@ interface RoomActions {
     hostId: string;
     videoURL: string;
   }) => void;
-  setUsers: (users: { id: string; username: string }[]) => void;
-  addUser: (user: { id: string; username: string }) => void;
-  removeUser: (userId: string) => void;
+  setUsers: (users: { socketId: string; username: string }[]) => void;
+  addUser: (user: { socketId: string; username: string }) => void;
+  removeUser: (username: string) => void;
   addMessage: (message: any) => void;
-  setVideoState: (state: { isPlaying: boolean; currentTime: number }) => void;
+  setVideoState: (videoState: {
+    isPlaying: boolean;
+    currentTime: number;
+  }) => void;
   setVideoURL: (url: string) => void;
   resetState: () => void;
 }
@@ -37,3 +40,43 @@ const initialState: RoomState = {
   isPlaying: false,
   currentTime: 0,
 };
+
+export const useRoomStore = create<RoomState & RoomActions>((set) => ({
+  ...initialState,
+
+  // Actions:
+  setConnected: (status) => set({ isConnected: status }),
+
+  setRoomDetails: (details) =>
+    set({
+      roomId: details.roomId,
+      hostId: details.hostId,
+      videoURL: details.videoURL,
+    }),
+
+  setUsers: (users) => set({ users: users }),
+
+  addUser: (user) =>
+    set((state) => ({
+      users: [...state.users, user],
+    })),
+
+  removeUser: (username) =>
+    set((state) => ({
+      users: state.users.filter((user) => user.username !== username),
+    })),
+
+  addMessage: (message) =>
+    set((state) => ({
+      messages: [...state.messages, message],
+    })),
+
+  setVideoState: (videoState) =>
+    set({
+      isPlaying: videoState.isPlaying,
+      currentTime: videoState.currentTime,
+    }),
+
+  setVideoURL: (url) => set({ videoURL: url }),
+  resetState: () => set(initialState),
+}));

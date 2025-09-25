@@ -23,7 +23,7 @@ export default function hostHandler(
       io.to(roomId).emit(
         "newMessage",
         generateServerMessage("updateVideoState", {
-          type: eventType,
+          eventType: eventType,
           currentTime,
         }),
       );

@@ -1,8 +1,18 @@
 import { RoomLayout } from "@/components/room-layout";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import ReactPlayer from "react-player";
 
 export const Route = createFileRoute("/watch/$roomId")({
+  beforeLoad: ({ context, location }) => {
+    if (!context.auth.isAuthenticated) {
+      throw redirect({
+        to: "/sign-in",
+        search: {
+          redirect: location.href,
+        },
+      });
+    }
+  },
   component: RouteComponent,
 });
 

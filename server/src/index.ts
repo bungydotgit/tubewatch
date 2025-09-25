@@ -8,7 +8,8 @@ const app = express();
 const httpServer = createServer();
 const io = new Server(httpServer, {
   cors: {
-    origin: "*",
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
   },
 });
 dotenv.config();
@@ -17,10 +18,6 @@ initializeSocket(io);
 
 const PORT = process.env.PORT || 8081;
 
-app.listen(8081, (error) => {
-  if (!error) {
-    console.log(`Websocket server listening on port: ${PORT}`);
-  } else {
-    console.log(`Failed to start the websocket server: ${error}`);
-  }
+httpServer.listen(8081, () => {
+  console.log(`Websocket server listening on port: ${PORT}`);
 });
