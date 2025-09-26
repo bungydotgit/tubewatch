@@ -1,6 +1,6 @@
 import { emitChangeVideo, emitVideoStateChange } from "@/lib/socket";
 import { useRoomStore } from "@/store/useRoomStore";
-import { useRef, type ReactEventHandler } from "react";
+import { useEffect, useRef, type ReactEventHandler } from "react";
 import ReactPlayer from "react-player";
 
 export default function ResponsiveVideoPlayer() {
@@ -9,27 +9,22 @@ export default function ResponsiveVideoPlayer() {
   const roomId = useRoomStore((state) => state.roomId as string);
   const isPlaying = useRoomStore((state) => state.isPlaying);
   const { setVideoState } = useRoomStore.getState();
-  const currentTime = useRoomStore((state) => state.currentTime);
 
   const handlePlay = () => {
     if (videoPlayerRef.current) {
-      setVideoState({
-        isPlaying: true,
-        currentTime: videoPlayerRef.current.currentTime,
-      });
-      emitVideoStateChange(roomId, currentTime, "PLAY");
-      console.log(`Current Time: `, currentTime);
+      const newCurrentTime = videoPlayerRef.current.currentTime;
+
+      emitVideoStateChange(roomId, newCurrentTime, "PLAY");
+      console.log(`Current Time: `, newCurrentTime);
     }
   };
 
   const handlePause = () => {
     if (videoPlayerRef.current) {
-      setVideoState({
-        isPlaying: false,
-        currentTime: videoPlayerRef.current.currentTime,
-      });
-      emitVideoStateChange(roomId, currentTime, "PAUSE");
-      console.log(`Current Time: `, currentTime);
+      const newCurrentTime = videoPlayerRef.current.currentTime;
+
+      emitVideoStateChange(roomId, newCurrentTime, "PAUSE");
+      console.log(`Current Time: `, newCurrentTime);
     }
   };
 

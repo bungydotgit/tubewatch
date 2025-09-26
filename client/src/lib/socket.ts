@@ -40,9 +40,11 @@ socket.on("newMessage", (message) => {
 
   if (message.type === "updateVideoState") {
     setVideoState({
-      isPlaying: message.payload.type === "PLAY",
+      isPlaying: message.payload.eventType === "PLAY",
       currentTime: message.payload.currentTime,
     });
+
+    console.log("state updating");
   }
 });
 
