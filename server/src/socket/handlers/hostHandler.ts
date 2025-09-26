@@ -20,7 +20,7 @@ export default function hostHandler(
   socket.on("videoStateChange", (data) => {
     const { roomId, currentTime, eventType } = data;
     if (authorizeHost(roomId, socket.id)) {
-      io.to(roomId).emit(
+      socket.to(roomId).emit(
         "newMessage",
         generateServerMessage("updateVideoState", {
           eventType: eventType,
