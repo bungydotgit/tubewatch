@@ -3,7 +3,6 @@ import { RoomLayout } from "@/components/room-layout";
 import { useRoomStore } from "@/store/useRoomStore";
 import { useUser } from "@clerk/clerk-react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useState } from "react";
 
 export const Route = createFileRoute("/watch/$roomId")({
   beforeLoad: ({ context, location }) => {

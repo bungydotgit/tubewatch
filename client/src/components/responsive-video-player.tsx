@@ -16,10 +16,15 @@ export default function ResponsiveVideoPlayer({
   const roomId = useRoomStore((state) => state.roomId as string);
   const isPlaying = useRoomStore((state) => state.isPlaying);
   const currentTime = useRoomStore((state) => state.currentTime);
-  const setIsPlaying = useRoomStore((state) => state.setIsPlaying);
-  const setCurrentTime = useRoomStore((state) => state.setCurrentTime);
-
-  console.log("is host?: ", isHost);
+  const getPlayerTime = () => {
+    if (
+      videoPlayerRef.current &&
+      typeof videoPlayerRef.current.currentTime === "number"
+    ) {
+      return videoPlayerRef.current.currentTime;
+    }
+    return 0;
+  };
 
   const seekTo = (seconds: number) => {
     if (videoPlayerRef.current) {
@@ -28,37 +33,84 @@ export default function ResponsiveVideoPlayer({
   };
 
   const handlePlay = () => {
-    if (videoPlayerRef.current) {
-      const newCurrentTime = videoPlayerRef.current.currentTime;
+    if (!isHost) return;
 
+    if (videoPlayerRef.current) {
+      const newCurrentTime = getPlayerTime();
       emitVideoStateChange(roomId, username, newCurrentTime, "PLAY");
-      console.log(`Current Time: `, newCurrentTime);
+      console.log(`Current Time emitted (PLAY): `, newCurrentTime);
     }
   };
 
   const handlePause = () => {
-    if (videoPlayerRef.current) {
-      const newCurrentTime = videoPlayerRef.current.currentTime;
+    if (!isHost) return;
 
+    if (videoPlayerRef.current) {
+      const newCurrentTime = getPlayerTime();
       emitVideoStateChange(roomId, username, newCurrentTime, "PAUSE");
-      console.log(`Current Time: `, newCurrentTime);
+      console.log(`Current Time emitted (PAUSE): `, newCurrentTime);
     }
   };
 
   useEffect(() => {
-    setIsPlaying(false);
-    seekTo(currentTime);
-  }, [currentTime]);
+    const player = videoPlayerRef.current;
+
+    if (!player || !videoURL) return;
+    if (typeof currentTime === "number" && currentTime > 2) {
+      const currentLocalTime = getPlayerTime();
+      const timeDifference = Math.abs(currentLocalTime - currentTime);
+
+      if (timeDifference > 1) {
+        seekTo(currentTime);
+        console.log(
+          `Seeking due to time difference: ${timeDifference.toFixed(2)}s`,
+        );
+      }
+    }
+    if (isPlaying) {
+      player.play();
+    } else {
+      player.pause();
+    }
+  }, [isPlaying, currentTime, videoURL]);
 
   return (
-    <ReactPlayer
-      ref={videoPlayerRef}
-      src={videoURL}
-      style={{ width: "100%", height: "auto", aspectRatio: "16/9" }}
-      playing={isPlaying}
-      onPlay={handlePlay}
-      onPause={handlePause}
-      controls={isHost}
-    />
+    <div
+      style={{
+        width: "100%",
+        height: "auto",
+        aspectRatio: "16/9",
+        position: "relative",
+      }}
+    >
+           {" "}
+      {!isHost && (
+        <div
+          className="absolute inset-0"
+          style={{
+            zIndex: 10,
+            backgroundColor: "transparent",
+            cursor: "default",
+          }}
+        />
+      )}
+           {" "}
+      <ReactPlayer
+        ref={videoPlayerRef}
+        src={videoURL}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+        }}
+        playing={isPlaying}
+        onPlay={isHost ? handlePlay : undefined}
+        onPause={isHost ? handlePause : undefined}
+        controls={isHost}
+      />
+         {" "}
+    </div>
   );
 }
