@@ -9,12 +9,14 @@ export class RoomStore {
     this.socketToRoomMap = new Map<string, string>();
   }
 
-  addRoom(hostId: string, roomId: string, videoURL: string) {
+  addRoom(hostUsername: string, roomId: string, videoURL: string) {
     if (!this.rooms.get(roomId)) {
       this.rooms.set(roomId, {
-        host: hostId,
+        host: hostUsername,
         users: [],
         videoURL,
+        isPlaying: false,
+        currentTime: 0,
       });
     }
   }
@@ -58,6 +60,14 @@ export class RoomStore {
     }
 
     return null;
+  }
+
+  setPlaybackState(roomId: string, currentTime: number, isPlaying: boolean) {
+    const room = this.getRoom(roomId);
+    if (room) {
+      room.currentTime = currentTime;
+      room.isPlaying = isPlaying;
+    }
   }
 
   setVideoURL(roomId: string, videoURL: string) {

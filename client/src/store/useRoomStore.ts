@@ -3,7 +3,7 @@ import { create } from "zustand";
 interface RoomState {
   isConnected: boolean;
   roomId: string | null;
-  hostId: string | null;
+  hostId: string | null; // host username
   users: { socketId: string; username: string }[];
   messages: any[];
   videoURL: string | null;
@@ -22,6 +22,8 @@ interface RoomActions {
   addUser: (user: { socketId: string; username: string }) => void;
   removeUser: (username: string) => void;
   addMessage: (message: any) => void;
+  setIsPlaying: (playing: boolean) => void;
+  setCurrentTime: (newCurrentTime: number) => void;
   setVideoState: (videoState: {
     isPlaying: boolean;
     currentTime: number;
@@ -70,6 +72,9 @@ export const useRoomStore = create<RoomState & RoomActions>((set) => ({
     set((state) => ({
       messages: [...state.messages, message],
     })),
+
+  setIsPlaying: (playing) => set({ isPlaying: playing }),
+  setCurrentTime: (newCurrentTime) => set({ currentTime: newCurrentTime }),
 
   setVideoState: (videoState) =>
     set({

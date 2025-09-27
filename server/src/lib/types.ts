@@ -8,6 +8,8 @@ export type Room = {
   host: string;
   users: Array<User>;
   videoURL: string;
+  isPlaying: boolean;
+  currentTime: number;
 };
 
 export type ServerMessage =

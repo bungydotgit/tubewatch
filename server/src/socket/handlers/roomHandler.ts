@@ -7,7 +7,7 @@ function roomHandler(io: Server, socket: Socket, roomStore: RoomStore) {
     const { roomId, username, videoURL } = data;
 
     socket.join(roomId);
-    roomStore.addRoom(socket.id, roomId, videoURL);
+    roomStore.addRoom(username, roomId, videoURL);
     roomStore.addUser(roomId, socket.id, username);
 
     socket.broadcast.to(roomId).emit(
@@ -21,19 +21,35 @@ function roomHandler(io: Server, socket: Socket, roomStore: RoomStore) {
     io.to(roomId).emit("updateUserList", roomStore.getRoomUserList(roomId));
   });
 
-  socket.on("join-room", (data) => {
+  socket.on("join-room", (data, callback) => {
     const { roomId, username } = data;
-    const room = roomStore.getRoom(roomId);
 
-    if (room) {
+    try {
+      const room = roomStore.getRoom(roomId);
+
+      if (!room) {
+        return callback({
+          success: false,
+          error: "Room code is invalid or room no longer exists.",
+        });
+      }
+
       socket.join(roomId);
       roomStore.addUser(roomId, socket.id, username);
+      console.log(`User joined: ${username} -> ${roomId}`);
+      console.log(roomStore.getRoom(roomId));
       socket.emit("changeVideo", {
         videoURL: room?.videoURL,
       });
       io.to(roomId).emit("updateUserList", roomStore.getRoomUserList(roomId));
-    } else {
-      socket.emit("error", { error: "Room Does not exist" });
+
+      return callback({ success: true });
+    } catch (error) {
+      console.error("Join room error: ", error);
+      callback({
+        success: false,
+        error: "An unexpected server error occurred.",
+      });
     }
   });
 }

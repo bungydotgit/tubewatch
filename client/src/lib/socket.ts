@@ -59,8 +59,12 @@ socket.on("error", (error) => {
   addMessage({ type: "error", text: error.error });
 });
 
-export const joinRoom = (roomId: string, username: string) => {
-  socket.emit("join-room", { roomId, username });
+export const joinRoom = (
+  roomId: string,
+  username: string,
+  callback: (response: { success: boolean; error?: string }) => void,
+) => {
+  socket.emit("join-room", { roomId, username }, callback);
 };
 
 export const createAndJoinRoom = (
@@ -78,10 +82,11 @@ export const createAndJoinRoom = (
 // host-only events
 export const emitVideoStateChange = (
   roomId: string,
+  username: string,
   currentTime: number,
   eventType: "PLAY" | "PAUSE",
 ) => {
-  socket.emit("videoStateChange", { roomId, currentTime, eventType });
+  socket.emit("videoStateChange", { username, roomId, currentTime, eventType });
 };
 
 export const emitChangeVideo = (roomId: string, videoURL: string) => {

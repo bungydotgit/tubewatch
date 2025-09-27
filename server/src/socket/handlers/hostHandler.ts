@@ -7,19 +7,23 @@ export default function hostHandler(
   socket: Socket,
   roomStore: RoomStore,
 ) {
-  const authorizeHost = (roomId: string, socketId: string) => {
+  const authorizeHost = (roomId: string, username: string) => {
     const room = roomStore.getRoom(roomId);
+    console.log(room);
 
     if (room) {
-      return room.host === socketId;
+      console.log(room.host == username, " ", room.host === username);
+      return room.host === username;
     }
 
     return false;
   };
 
   socket.on("videoStateChange", (data) => {
-    const { roomId, currentTime, eventType } = data;
-    if (authorizeHost(roomId, socket.id)) {
+    const { username, roomId, currentTime, eventType } = data;
+    console.log("incoming state change: ", data);
+    console.log(authorizeHost(roomId, username));
+    if (authorizeHost(roomId, username)) {
       socket.to(roomId).emit(
         "newMessage",
         generateServerMessage("updateVideoState", {
@@ -31,9 +35,9 @@ export default function hostHandler(
   });
 
   socket.on("changeVideo", (data) => {
-    const { roomId, videoURL } = data;
+    const { username, roomId, videoURL } = data;
 
-    if (authorizeHost(roomId, socket.id)) {
+    if (authorizeHost(roomId, username)) {
       roomStore.setVideoURL(roomId, videoURL);
 
       io.to(roomId).emit(

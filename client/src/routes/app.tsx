@@ -3,6 +3,7 @@ import { connectSocket, createAndJoinRoom, joinRoom } from "@/lib/socket";
 import { useUser } from "@clerk/clerk-react";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { v4 as uuid } from "uuid";
 
 export const Route = createFileRoute("/app")({
@@ -57,10 +58,15 @@ function RouteComponent() {
     }
     const username = user?.username as string;
 
-    joinRoom(roomId, username);
-    navigate({
-      to: "/watch/$roomId",
-      params: { roomId },
+    joinRoom(roomId, username, (response) => {
+      if (response.success) {
+        navigate({
+          to: "/watch/$roomId",
+          params: { roomId },
+        });
+      } else {
+        toast.error(`Error Joining room: ${response.error}`);
+      }
     });
   }
 

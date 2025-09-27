@@ -1,20 +1,35 @@
-import { emitChangeVideo, emitVideoStateChange } from "@/lib/socket";
+import { emitVideoStateChange } from "@/lib/socket";
 import { useRoomStore } from "@/store/useRoomStore";
-import { useEffect, useRef, type ReactEventHandler } from "react";
+import { useEffect, useRef } from "react";
 import ReactPlayer from "react-player";
 
-export default function ResponsiveVideoPlayer() {
+interface ResponsivePlayerProps {
+  isHost: boolean;
+  username: string;
+}
+export default function ResponsiveVideoPlayer({
+  isHost,
+  username,
+}: ResponsivePlayerProps) {
   const videoPlayerRef = useRef<any | null>(null);
   const videoURL = useRoomStore((state) => state.videoURL as string);
   const roomId = useRoomStore((state) => state.roomId as string);
   const isPlaying = useRoomStore((state) => state.isPlaying);
-  const { setVideoState } = useRoomStore.getState();
+  const currentTime = useRoomStore((state) => state.currentTime);
+  const setIsPlaying = useRoomStore((state) => state.setIsPlaying);
+  const setCurrentTime = useRoomStore((state) => state.setCurrentTime);
+
+  const seekTo = (seconds: number) => {
+    if (videoPlayerRef.current) {
+      videoPlayerRef.current.currentTime = seconds;
+    }
+  };
 
   const handlePlay = () => {
     if (videoPlayerRef.current) {
       const newCurrentTime = videoPlayerRef.current.currentTime;
 
-      emitVideoStateChange(roomId, newCurrentTime, "PLAY");
+      emitVideoStateChange(roomId, username, newCurrentTime, "PLAY");
       console.log(`Current Time: `, newCurrentTime);
     }
   };
@@ -23,14 +38,15 @@ export default function ResponsiveVideoPlayer() {
     if (videoPlayerRef.current) {
       const newCurrentTime = videoPlayerRef.current.currentTime;
 
-      emitVideoStateChange(roomId, newCurrentTime, "PAUSE");
+      emitVideoStateChange(roomId, username, newCurrentTime, "PAUSE");
       console.log(`Current Time: `, newCurrentTime);
     }
   };
 
-  const handleProgress = (progress: any) => {
-    setVideoState({ isPlaying: true, currentTime: progress.played });
-  };
+  useEffect(() => {
+    setIsPlaying(false);
+    seekTo(currentTime);
+  }, [currentTime]);
 
   return (
     <ReactPlayer
@@ -40,8 +56,7 @@ export default function ResponsiveVideoPlayer() {
       playing={isPlaying}
       onPlay={handlePlay}
       onPause={handlePause}
-      onProgress={handleProgress}
-      controls
+      controls={isHost}
     />
   );
 }

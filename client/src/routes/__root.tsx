@@ -1,6 +1,7 @@
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanstackDevtools } from "@tanstack/react-devtools";
+import { Bounce, ToastContainer } from "react-toastify";
 
 export const Route = createRootRoute({
   component: () => (
@@ -18,6 +19,19 @@ export const Route = createRootRoute({
             render: <TanStackRouterDevtoolsPanel />,
           },
         ]}
+      />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
       />
     </>
   ),

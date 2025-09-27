@@ -45,11 +45,11 @@ const rootElement = document.getElementById("app");
 if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
-    <StrictMode>
-      <ClerkWrapper>
-        <InnerApp />
-      </ClerkWrapper>
-    </StrictMode>,
+    // <StrictMode>
+    <ClerkWrapper>
+      <InnerApp />
+    </ClerkWrapper>,
+    // </StrictMode>,
   );
 }
 
