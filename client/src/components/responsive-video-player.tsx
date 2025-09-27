@@ -19,6 +19,8 @@ export default function ResponsiveVideoPlayer({
   const setIsPlaying = useRoomStore((state) => state.setIsPlaying);
   const setCurrentTime = useRoomStore((state) => state.setCurrentTime);
 
+  console.log("is host?: ", isHost);
+
   const seekTo = (seconds: number) => {
     if (videoPlayerRef.current) {
       videoPlayerRef.current.currentTime = seconds;

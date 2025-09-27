@@ -22,6 +22,7 @@ export const Route = createFileRoute("/watch/$roomId")({
 function RouteComponent() {
   const { isLoaded, user } = useUser();
   const hostId = useRoomStore((state) => state.hostId);
+  console.log("host id -- ", hostId);
 
   if (!isLoaded) {
     return (

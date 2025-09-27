@@ -74,7 +74,7 @@ export const createAndJoinRoom = (
 ) => {
   socket.emit("create-join", { roomId, username, videoURL });
   if (socket.connected) {
-    const hostId = socket.id as string;
+    const hostId = username;
     setRoomDetails({ roomId, hostId, videoURL });
   }
 };
