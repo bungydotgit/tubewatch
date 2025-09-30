@@ -1,8 +1,11 @@
 import ResponsiveVideoPlayer from "@/components/responsive-video-player";
 import { RoomLayout } from "@/components/room-layout";
+import YouTubeIframePlayer from "@/components/YouTubeIframePlayer";
+import { useYouTubePlayerSync } from "@/hooks/useYouTubePlayerSync";
 import { useRoomStore } from "@/store/useRoomStore";
 import { useUser } from "@clerk/clerk-react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 
 export const Route = createFileRoute("/watch/$roomId")({
   beforeLoad: ({ context, location }) => {
@@ -21,7 +24,11 @@ export const Route = createFileRoute("/watch/$roomId")({
 function RouteComponent() {
   const { isLoaded, user } = useUser();
   const hostId = useRoomStore((state) => state.hostId);
-  console.log("host id -- ", hostId);
+  const videoURL = useRoomStore((state) => state.videoURL);
+
+  const isHost = hostId === user?.username;
+
+  const { playerRef, playerProps } = useYouTubePlayerSync({ isHost });
 
   if (!isLoaded) {
     return (
@@ -34,9 +41,11 @@ function RouteComponent() {
   return (
     <RoomLayout
       videoPlayer={
-        <ResponsiveVideoPlayer
-          isHost={hostId === user?.username}
-          username={user?.username as string}
+        <YouTubeIframePlayer
+          ref={playerRef}
+          isHostControls={isHost}
+          videoId={videoURL as string}
+          {...playerProps}
         />
       }
       chat={<p>Chat component</p>}

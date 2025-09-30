@@ -83,7 +83,6 @@ export default function ResponsiveVideoPlayer({
         position: "relative",
       }}
     >
-           {" "}
       {!isHost && (
         <div
           className="absolute inset-0"
@@ -94,7 +93,6 @@ export default function ResponsiveVideoPlayer({
           }}
         />
       )}
-           {" "}
       <ReactPlayer
         ref={videoPlayerRef}
         src={videoURL}
@@ -110,7 +108,6 @@ export default function ResponsiveVideoPlayer({
         onPause={isHost ? handlePause : undefined}
         controls={isHost}
       />
-         {" "}
     </div>
   );
 }
