@@ -17,6 +17,8 @@ interface RoomActions {
     roomId: string;
     hostId: string;
     videoURL: string;
+    currentTime: number;
+    isPlaying: boolean;
   }) => void;
   setUsers: (users: { socketId: string; username: string }[]) => void;
   addUser: (user: { socketId: string; username: string }) => void;
@@ -54,6 +56,8 @@ export const useRoomStore = create<RoomState & RoomActions>((set) => ({
       roomId: details.roomId,
       hostId: details.hostId,
       videoURL: details.videoURL,
+      currentTime: details.currentTime,
+      isPlaying: details.isPlaying,
     }),
 
   setUsers: (users) => set({ users: users }),

@@ -62,7 +62,17 @@ socket.on("error", (error) => {
 export const joinRoom = (
   roomId: string,
   username: string,
-  callback: (response: { success: boolean; error?: string }) => void,
+  callback: (response: {
+    success: boolean;
+    roomPayload?: {
+      roomId: string;
+      hostId: string;
+      videoURL: string;
+      currentTime: number;
+      isPlaying: boolean;
+    };
+    error?: string;
+  }) => void,
 ) => {
   socket.emit("join-room", { roomId, username }, callback);
 };
@@ -75,7 +85,13 @@ export const createAndJoinRoom = (
   socket.emit("create-join", { roomId, username, videoURL });
   if (socket.connected) {
     const hostId = username;
-    setRoomDetails({ roomId, hostId, videoURL });
+    setRoomDetails({
+      roomId,
+      hostId,
+      videoURL,
+      currentTime: 0,
+      isPlaying: false,
+    });
   }
 };
 

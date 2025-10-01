@@ -13,6 +13,7 @@ export function useYouTubePlayerSync({ isHost }: UseYouTubePlayerSyncProps) {
 
   // --- NEW: State to track if the player is ready to be controlled ---
   const [isPlayerReady, setIsPlayerReady] = useState(false);
+  const [hasStartedWatching, setHasStartedWatching] = useState(false);
 
   const roomId = useRoomStore((state) => state.roomId);
   const isPlaying = useRoomStore((state) => state.isPlaying);
@@ -66,39 +67,84 @@ export function useYouTubePlayerSync({ isHost }: UseYouTubePlayerSyncProps) {
     setIsPlayerReady(true);
   };
 
-  // --- THE MAIN FIX: The Synchronization Logic ---
+  const handleStartWatching = () => {
+    setHasStartedWatching(true);
+
+    // setTimeout(() => {
+    //   const player = getPlayer();
+    //   if (player && isPlayerReady) {
+    //     const localTime = player.getTime();
+    //     const timeDifference = Math.abs(localTime - currentTime);
+
+    //     console.log("📊 Member sync data:", {
+    //       localTime,
+    //       currentTime,
+    //       timeDifference,
+    //       isPlaying,
+    //     });
+
+    //     if (timeDifference > 1.5) {
+    //       player.seekTo(currentTime);
+
+    //       setTimeout(() => {
+    //         if (isPlaying) {
+    //           player.play();
+    //         } else {
+    //           player.pause();
+    //         }
+    //       }, 600);
+    //     } else {
+    //       setTimeout(() => {
+    //         if (isPlaying) {
+    //           player.play();
+    //         } else {
+    //           player.pause();
+    //         }
+    //       }, 200);
+    //     }
+    //   }
+    // }, 300);
+  };
+
   useEffect(() => {
-    // 1. Guard Clause: Don't run this logic until the player is ready.
-    if (!isPlayerReady) {
-      return;
-    }
+    if (!isPlayerReady) return;
+    if (!isHost && !hasStartedWatching) return;
 
     const player = getPlayer();
     if (!player) return;
 
-    // 2. Sync seeking
     const localTime = player.getTime();
     const timeDifference = Math.abs(localTime - currentTime);
-    if (timeDifference > 1.5) {
-      player.seekTo(currentTime);
-    }
+    const needsSeek = timeDifference > 1.5;
 
-    // 3. Sync play/pause state
-    if (isPlaying) {
-      player.play();
+    if (needsSeek) {
+      player.seekTo(currentTime);
+
+      setTimeout(() => {
+        if (isPlaying) {
+          player.play();
+        } else {
+          player.pause();
+        }
+      }, 500);
     } else {
-      player.pause();
+      if (isPlaying) {
+        player.play();
+      } else {
+        player.pause();
+      }
     }
-    // 4. Dependency Array: Now depends on isPlayerReady as well.
-  }, [isPlaying, currentTime, isPlayerReady]);
+  }, [isPlaying, currentTime, isPlayerReady, hasStartedWatching]);
 
   return {
     playerRef,
+    hasStartedWatching,
+    handleStartWatching,
     playerProps: {
       onReady: handleReady,
       onPlay: isHost ? handlePlay : undefined,
       onPause: isHost ? handlePause : undefined,
-      onSeek: isHost ? handleSeek : undefined, // Only host should emit seek events
+      onSeek: isHost ? handleSeek : undefined,
     },
   };
 }

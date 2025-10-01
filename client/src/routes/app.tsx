@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import { connectSocket, createAndJoinRoom, joinRoom } from "@/lib/socket";
+import { useRoomStore } from "@/store/useRoomStore";
 import { useUser } from "@clerk/clerk-react";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
@@ -24,6 +25,8 @@ function RouteComponent() {
   const [videoURL, setVideoURL] = useState("");
   const [roomId, setRoomId] = useState("");
 
+  const setRoomDetails = useRoomStore((state) => state.setRoomDetails);
+
   const { user } = useUser();
 
   const navigate = useNavigate();
@@ -43,11 +46,12 @@ function RouteComponent() {
     console.log(user);
 
     createAndJoinRoom(roomId, username, videoURL);
-
     navigate({
       to: "/watch/$roomId",
       params: { roomId },
     });
+
+    toast.success("Room created successfully!");
   }
 
   function handleJoinRoom(event: React.FormEvent) {
@@ -60,6 +64,10 @@ function RouteComponent() {
 
     joinRoom(roomId, username, (response) => {
       if (response.success) {
+        toast.success("Joined Room successfully");
+        if (response.roomPayload) {
+          setRoomDetails({ ...response.roomPayload });
+        }
         navigate({
           to: "/watch/$roomId",
           params: { roomId },

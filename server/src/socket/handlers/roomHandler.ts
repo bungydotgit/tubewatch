@@ -43,7 +43,16 @@ function roomHandler(io: Server, socket: Socket, roomStore: RoomStore) {
       });
       io.to(roomId).emit("updateUserList", roomStore.getRoomUserList(roomId));
 
-      return callback({ success: true });
+      return callback({
+        success: true,
+        roomPayload: {
+          roomId: roomId,
+          hostId: room.host,
+          videoURL: room.videoURL,
+          currentTime: room.currentTime,
+          isPlaying: room.isPlaying,
+        },
+      });
     } catch (error) {
       console.error("Join room error: ", error);
       callback({

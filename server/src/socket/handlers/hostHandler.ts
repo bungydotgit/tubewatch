@@ -24,6 +24,8 @@ export default function hostHandler(
     console.log("incoming state change: ", data);
     console.log(authorizeHost(roomId, username));
     if (authorizeHost(roomId, username)) {
+      const room = roomStore.getRoom(roomId);
+      roomStore.setPlaybackState(roomId, currentTime, eventType === "PLAY");
       socket.to(roomId).emit(
         "newMessage",
         generateServerMessage("updateVideoState", {
