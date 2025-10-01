@@ -1,7 +1,8 @@
 import { RoomLayout } from "@/components/room-layout";
+import UsersList from "@/components/UsersList";
 import YouTubeIframePlayer from "@/components/YouTubeIframePlayer";
 import { useYouTubePlayerSync } from "@/hooks/useYouTubePlayerSync";
-import { connectSocket, joinRoom } from "@/lib/socket";
+import { connectSocket, joinRoom, leaveRoom } from "@/lib/socket";
 import { useRoomStore } from "@/store/useRoomStore";
 import { useUser } from "@clerk/clerk-react";
 import {
@@ -49,6 +50,24 @@ function RouteComponent() {
     handleStartWatching();
   };
 
+  const handleLeaveRoom = () => {
+    (
+      document.getElementById("leave_room_modal") as HTMLDialogElement
+    )?.showModal();
+  };
+
+  const confirmLeave = () => {
+    (document.getElementById("leave_room_modal") as HTMLDialogElement)?.close();
+
+    leaveRoom();
+
+    navigate({ to: "/app" });
+  };
+
+  const cancelLeave = () => {
+    (document.getElementById("leave_room_modal") as HTMLDialogElement)?.close();
+  };
+
   useEffect(() => {
     if (storeRoomId === roomId) return;
     connectSocket();
@@ -80,6 +99,22 @@ function RouteComponent() {
     }
   }, [shouldShowModal]);
 
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      return "Are you sure you want to leave the watch party?";
+    };
+
+    // Add listener when in a room
+    if (roomId) {
+      window.addEventListener("beforeunload", handleBeforeUnload);
+    }
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [roomId]);
+
   if (!isLoaded) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -100,7 +135,23 @@ function RouteComponent() {
           />
         }
         chat={<p>Chat component</p>}
-        usersList={<p>uses list component</p>}
+        usersList={
+          <UsersList
+            onKickUser={(username: string) => {
+              // TODO: Implement kick functionality
+              console.log("Kick user:", username);
+              // You can add kick logic here later
+            }}
+          />
+        }
+        leaveButton={
+          <button
+            className="btn btn-outline btn-error"
+            onClick={handleLeaveRoom}
+          >
+            Leave Room
+          </button>
+        }
       />
 
       {/* Start Watching Modal */}
@@ -120,6 +171,28 @@ function RouteComponent() {
               onClick={handleStartWatchingClick}
             >
               ▶️ Start Watching
+            </button>
+          </div>
+        </div>
+      </dialog>
+
+      {/* Leave Room Confirmation Modal */}
+      <dialog
+        id="leave_room_modal"
+        className="modal modal-bottom sm:modal-middle"
+      >
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Leave Watch Party?</h3>
+          <p className="py-4">
+            Are you sure you want to leave this watch party? You'll stop
+            watching with the group.
+          </p>
+          <div className="modal-action">
+            <button className="btn btn-outline" onClick={cancelLeave}>
+              Stay
+            </button>
+            <button className="btn btn-error" onClick={confirmLeave}>
+              Leave Room
             </button>
           </div>
         </div>

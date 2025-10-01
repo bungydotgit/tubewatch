@@ -114,3 +114,7 @@ export const connectSocket = () => {
     socket.connect();
   }
 };
+
+export const leaveRoom = () => {
+  socket.emit("leave-room");
+};

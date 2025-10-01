@@ -36,7 +36,7 @@ export class RoomStore {
     }
   }
 
-  removeUser(socketId: string) {
+  removeUser(socketId: string): User | null {
     const roomId = this.socketToRoomMap.get(socketId);
     let user_ = null;
 

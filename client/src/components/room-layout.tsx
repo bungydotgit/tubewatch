@@ -4,12 +4,14 @@ interface RoomLayoutProps {
   videoPlayer: React.ReactNode;
   usersList: React.ReactNode;
   chat: React.ReactNode;
+  leaveButton?: React.ReactNode;
 }
 
 export const RoomLayout = ({
   videoPlayer,
   usersList,
   chat,
+  leaveButton,
 }: RoomLayoutProps) => {
   const roomId = useParams({
     from: "/watch/$roomId",
@@ -26,7 +28,7 @@ export const RoomLayout = ({
             {roomId}
           </span>
         </p>
-        <button className="btn btn-error">Leave</button>
+        {leaveButton}
       </div>
 
       {/* Video and Side Members Panel */}
@@ -39,7 +41,6 @@ export const RoomLayout = ({
         {/* Members Sidebar */}
         <div className="rounded-lg bg-base-300 col-span-2 min-h-0 flex flex-col">
           <div className="py-4 px-6 flex-1 min-h-0 overflow-hidden">
-            // Users list component
             {usersList}
           </div>
         </div>
