@@ -73,7 +73,7 @@ interface YouTubePlayerProps {
   onPlay?: () => void;
   onPause?: () => void;
   onStateChange?: (state: number) => void;
-  onSeek?: (seconds: number) => void; // <--- NEW: onSeek prop
+  onSeek?: (seconds: number) => void;
 }
 
 // --- Component Definition ---
@@ -90,7 +90,7 @@ const YouTubeIframePlayer = React.forwardRef<
       onPlay,
       onPause,
       onStateChange,
-      onSeek, // <--- NEW: Destructure onSeek
+      onSeek,
     },
     ref,
   ) => {
@@ -99,8 +99,8 @@ const YouTubeIframePlayer = React.forwardRef<
     const [isApiReady, setIsApiReady] = useState(false);
 
     // --- State for seek detection ---
-    const lastTimeRef = useRef(-1); // Stores the last known playback time
-    const timeUpdaterIntervalRef = useRef<number | null>(null); // Stores the interval ID
+    const lastTimeRef = useRef(-1);
+    const timeUpdaterIntervalRef = useRef<number | null>(null);
 
     // Extract the valid 11-character ID from the prop value
     const extractedVideoId = extractVideoId(videoId);
@@ -113,12 +113,10 @@ const YouTubeIframePlayer = React.forwardRef<
       const currentTime = player.getCurrentTime();
 
       if (lastTimeRef.current !== -1) {
-        // Detect a significant jump (seek)
-        // A threshold of 1.5 seconds is common to differentiate seeks from minor buffering stutters
         if (Math.abs(currentTime - lastTimeRef.current) > 1.5) {
           console.log(`Seek detected! New time: ${currentTime.toFixed(2)}`);
           if (onSeek) {
-            onSeek(currentTime); // <--- Call the onSeek prop
+            onSeek(currentTime);
           }
         }
       }
@@ -127,13 +125,11 @@ const YouTubeIframePlayer = React.forwardRef<
 
     // --- 1. Load YouTube Iframe API Script ---
     useEffect(() => {
-      // Check if API is already loaded
       if (window.YT && window.YT.Player) {
         setIsApiReady(true);
         return;
       }
 
-      // Check if script tag already exists
       let scriptTag = document.getElementById(
         "youtube-iframe-api-script",
       ) as HTMLScriptElement;
@@ -143,9 +139,7 @@ const YouTubeIframePlayer = React.forwardRef<
         scriptTag.src = "https://www.youtube.com/iframe_api";
         scriptTag.id = "youtube-iframe-api-script";
 
-        // Handle script load completion
         scriptTag.onload = () => {
-          // API might be ready immediately or need the callback
           if (window.YT && window.YT.Player) {
             setIsApiReady(true);
           }
@@ -154,7 +148,6 @@ const YouTubeIframePlayer = React.forwardRef<
         document.head.appendChild(scriptTag);
       }
 
-      // Define the global callback function required by the API
       const originalCallback = window.onYouTubeIframeAPIReady;
       window.onYouTubeIframeAPIReady = () => {
         setIsApiReady(true);
@@ -162,7 +155,6 @@ const YouTubeIframePlayer = React.forwardRef<
       };
 
       return () => {
-        // Restore original callback on cleanup
         window.onYouTubeIframeAPIReady = originalCallback || (() => {});
       };
     }, []);
@@ -176,11 +168,9 @@ const YouTubeIframePlayer = React.forwardRef<
         return;
       }
 
-      // Generate unique player ID
       const playerId = `ytplayer-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
       playerDivRef.current.id = playerId;
 
-      // --- Cleanup function for existing player and interval ---
       const cleanupPlayer = () => {
         if (playerRef.current) {
           try {
@@ -194,13 +184,11 @@ const YouTubeIframePlayer = React.forwardRef<
           clearInterval(timeUpdaterIntervalRef.current);
           timeUpdaterIntervalRef.current = null;
         }
-        lastTimeRef.current = -1; // Reset last time on player destroy
+        lastTimeRef.current = -1;
       };
 
-      // Destroy existing player instance and its interval before creating a new one
       cleanupPlayer();
 
-      // Create new player
       try {
         playerRef.current = new window.YT.Player(playerId, {
           videoId: extractedVideoId,
@@ -210,34 +198,31 @@ const YouTubeIframePlayer = React.forwardRef<
             controls: isHostControls ? 1 : 0,
             vq: "hd1080",
             autoplay: 0,
-            rel: 0, // Don't show related videos
-            modestbranding: 1, // Minimal YouTube branding
+            rel: 0,
+            modestbranding: 1,
           },
           events: {
             onReady: (event: any) => {
               console.log("YouTube Player ready for video:", extractedVideoId);
-              lastTimeRef.current = event.target.getCurrentTime(); // Initialize lastTime
+              lastTimeRef.current = event.target.getCurrentTime();
               if (onReady) onReady();
             },
             onStateChange: (event: any) => {
               const state = event.data;
               if (onStateChange) onStateChange(state);
 
-              // --- Handle state changes for seek detection ---
               if (state === window.YT.PlayerState.PLAYING) {
                 if (timeUpdaterIntervalRef.current === null) {
-                  // Start polling only if not already running
                   timeUpdaterIntervalRef.current = window.setInterval(
                     trackTime,
                     250,
-                  ); // Check every 250ms
+                  );
                 }
                 if (onPlay) onPlay();
               } else if (
                 state === window.YT.PlayerState.PAUSED ||
                 state === window.YT.PlayerState.BUFFERING
               ) {
-                // Stop polling when paused or buffering (seek often causes buffering)
                 if (timeUpdaterIntervalRef.current !== null) {
                   clearInterval(timeUpdaterIntervalRef.current);
                   timeUpdaterIntervalRef.current = null;
@@ -246,7 +231,6 @@ const YouTubeIframePlayer = React.forwardRef<
                   onPause();
                 }
               } else {
-                // For other states like ENDED, CUEUED, etc., stop polling
                 if (timeUpdaterIntervalRef.current !== null) {
                   clearInterval(timeUpdaterIntervalRef.current);
                   timeUpdaterIntervalRef.current = null;
@@ -263,7 +247,6 @@ const YouTubeIframePlayer = React.forwardRef<
       }
 
       return () => {
-        // Cleanup on component unmount or prop change causing re-initialization
         cleanupPlayer();
       };
     }, [isApiReady, extractedVideoId, isHostControls]);
@@ -282,8 +265,8 @@ const YouTubeIframePlayer = React.forwardRef<
       },
       seekTo: (seconds: number) => {
         if (playerRef.current?.seekTo) {
-          playerRef.current.seekTo(seconds, true); // `true` for allowSeekAhead
-          lastTimeRef.current = seconds; // Update lastTime immediately after manual seek
+          playerRef.current.seekTo(seconds, true);
+          lastTimeRef.current = seconds;
         }
       },
       getTime: () => {
@@ -294,32 +277,10 @@ const YouTubeIframePlayer = React.forwardRef<
     // --- Render ---
     if (!extractedVideoId) {
       return (
-        <div
-          style={{
-            position: "relative",
-            paddingTop: "56.25%",
-            width: "100%",
-            backgroundColor: "#1f2937",
-            borderRadius: "8px",
-            overflow: "hidden",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              color: "#ef4444",
-              textAlign: "center",
-              padding: "20px",
-            }}
-          >
-            <p style={{ margin: 0, fontWeight: "bold" }}>Invalid YouTube URL</p>
-            <p style={{ margin: "8px 0 0 0", fontSize: "14px", opacity: 0.8 }}>
+        <div className="w-full h-full flex items-center justify-center bg-base-200">
+          <div className="text-center p-6">
+            <p className="text-error font-bold text-lg">Invalid YouTube URL</p>
+            <p className="text-base-content/60 text-sm mt-2">
               Please provide a valid YouTube video link
             </p>
           </div>
@@ -328,39 +289,11 @@ const YouTubeIframePlayer = React.forwardRef<
     }
 
     return (
-      <div
-        style={{
-          position: "relative",
-          paddingTop: "56.25%",
-          width: "100%",
-          backgroundColor: "#1f2937",
-          borderRadius: "8px",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          ref={playerDivRef}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-          }}
-        />
+      <div className="w-full h-full">
+        <div ref={playerDivRef} className="w-full h-full" />
 
         {!isHostControls && (
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              zIndex: 10,
-              cursor: "default",
-            }}
-          />
+          <div className="absolute inset-0 z-10 cursor-default pointer-events-none" />
         )}
       </div>
     );

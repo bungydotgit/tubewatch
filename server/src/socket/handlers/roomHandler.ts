@@ -61,6 +61,12 @@ function roomHandler(io: Server, socket: Socket, roomStore: RoomStore) {
       });
     }
   });
+
+  socket.on("chatMessage", (data) => {
+    const { roomId, message } = data;
+
+    socket.to(roomId).emit("newMessage", { type: "chatMessage", message });
+  });
 }
 
 export default roomHandler;

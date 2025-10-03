@@ -1,3 +1,4 @@
+import type { Message } from "@/lib/socket";
 import { create } from "zustand";
 
 interface RoomState {
@@ -5,7 +6,7 @@ interface RoomState {
   roomId: string | null;
   hostId: string | null; // host username
   users: { socketId: string; username: string }[];
-  messages: any[];
+  messages: Message[];
   videoURL: string | null;
   isPlaying: boolean;
   currentTime: number;

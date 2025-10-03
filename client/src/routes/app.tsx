@@ -6,6 +6,7 @@ import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { v4 as uuid } from "uuid";
+import { z } from "zod";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: ({ context, location }) => {
@@ -24,37 +25,46 @@ export const Route = createFileRoute("/app")({
 function RouteComponent() {
   const [videoURL, setVideoURL] = useState("");
   const [roomId, setRoomId] = useState("");
-
   const setRoomDetails = useRoomStore((state) => state.setRoomDetails);
-
   const { user } = useUser();
-
   const navigate = useNavigate();
+  const resetState = useRoomStore((state) => state.resetState);
+
+  const youtubeUrlRegex =
+    /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/|watch\?.+&v=))([\w-]{11})(?:.+)?$/;
+  const videoSchema = z.string().regex(youtubeUrlRegex, "Invalid youtube url");
 
   useEffect(() => {
     connectSocket();
   }, []);
 
   function handleCreateRoom(event: React.FormEvent) {
+    resetState();
     event.preventDefault();
-    if (!videoURL) {
-      alert("Please enter video url");
-      return;
+    try {
+      videoSchema.parse(videoURL);
+
+      const roomId = uuid();
+      const username = user?.username as string;
+
+      createAndJoinRoom(roomId, username, videoURL);
+      navigate({
+        to: "/watch/$roomId",
+        params: { roomId },
+      });
+
+      toast.success("Room created successfully!");
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        error.issues.forEach((issue) => {
+          toast.error(issue.message);
+        });
+      }
     }
-    const roomId = uuid();
-    const username = user?.username as string;
-    console.log(user);
-
-    createAndJoinRoom(roomId, username, videoURL);
-    navigate({
-      to: "/watch/$roomId",
-      params: { roomId },
-    });
-
-    toast.success("Room created successfully!");
   }
 
   function handleJoinRoom(event: React.FormEvent) {
+    resetState();
     event.preventDefault();
     if (!roomId) {
       alert("Please enter a roomId");

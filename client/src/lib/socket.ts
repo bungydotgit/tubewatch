@@ -32,7 +32,6 @@ socket.on("updateUserList", (users) => {
 
 socket.on("newMessage", (message) => {
   console.log("New message recieved: ", message);
-  addMessage(message);
 
   if (message.type === "updateVideoURL") {
     setVideoURL(message.payload.videoURL);
@@ -45,6 +44,15 @@ socket.on("newMessage", (message) => {
     });
 
     console.log("state updating");
+  }
+
+  if (message.type === "chatMessage") {
+    // Assuming 'message' here is the object { id, username, message: chatContent, timestamp: string }
+    const parsedMessage = {
+      ...message.message,
+      timestamp: new Date(message.message.timestamp), // Convert string to Date object
+    };
+    addMessage(parsedMessage);
   }
 });
 
@@ -113,6 +121,18 @@ export const connectSocket = () => {
   if (!socket.connected) {
     socket.connect();
   }
+};
+
+export interface Message {
+  id: string;
+  username: string;
+  message: string;
+  timestamp: Date;
+}
+
+export const sendChatMessage = (message: Message) => {
+  const roomId = useRoomStore.getState().roomId;
+  socket.emit("chatMessage", { roomId, message });
 };
 
 export const leaveRoom = () => {

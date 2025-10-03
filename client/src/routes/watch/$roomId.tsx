@@ -1,3 +1,4 @@
+import { Chat } from "@/components/Chat";
 import { RoomLayout } from "@/components/room-layout";
 import UsersList from "@/components/UsersList";
 import YouTubeIframePlayer from "@/components/YouTubeIframePlayer";
@@ -134,7 +135,7 @@ function RouteComponent() {
             {...playerProps}
           />
         }
-        chat={<p>Chat component</p>}
+        chat={<Chat />}
         usersList={
           <UsersList
             onKickUser={(username: string) => {
