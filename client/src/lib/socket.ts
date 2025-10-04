@@ -47,10 +47,9 @@ socket.on("newMessage", (message) => {
   }
 
   if (message.type === "chatMessage") {
-    // Assuming 'message' here is the object { id, username, message: chatContent, timestamp: string }
     const parsedMessage = {
       ...message.message,
-      timestamp: new Date(message.message.timestamp), // Convert string to Date object
+      timestamp: new Date(message.message.timestamp),
     };
     addMessage(parsedMessage);
   }
