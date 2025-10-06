@@ -3,7 +3,13 @@ import { RoomLayout } from "@/components/room-layout";
 import UsersList from "@/components/UsersList";
 import YouTubeIframePlayer from "@/components/YouTubeIframePlayer";
 import { useYouTubePlayerSync } from "@/hooks/useYouTubePlayerSync";
-import { connectSocket, joinRoom, leaveRoom } from "@/lib/socket";
+import {
+  connectSocket,
+  joinRoom,
+  kickUser,
+  leaveRoom,
+  onUserKicked,
+} from "@/lib/socket";
 import { useRoomStore } from "@/store/useRoomStore";
 import { useUser } from "@clerk/clerk-react";
 import {
@@ -12,6 +18,7 @@ import {
   useNavigate,
   useParams,
 } from "@tanstack/react-router";
+import { Play } from "lucide-react";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 
@@ -101,6 +108,12 @@ function RouteComponent() {
   }, [shouldShowModal]);
 
   useEffect(() => {
+    onUserKicked(() => {
+      navigate({ to: "/app" });
+    });
+  }, [navigate]);
+
+  useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();
       return "Are you sure you want to leave the watch party?";
@@ -138,10 +151,8 @@ function RouteComponent() {
         chat={<Chat />}
         usersList={
           <UsersList
-            onKickUser={(username: string) => {
-              // TODO: Implement kick functionality
-              console.log("Kick user:", username);
-              // You can add kick logic here later
+            onKickUser={(userToKick: string) => {
+              kickUser(user?.username as string, userToKick, roomId);
             }}
           />
         }
@@ -171,7 +182,8 @@ function RouteComponent() {
               className="btn btn-primary"
               onClick={handleStartWatchingClick}
             >
-              ▶️ Start Watching
+              <Play size={18} />
+              Start Watching
             </button>
           </div>
         </div>

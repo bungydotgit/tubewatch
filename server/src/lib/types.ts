@@ -15,6 +15,7 @@ export type Room = {
 export type ServerMessage =
   | "userJoin"
   | "userLeft"
+  | "userKicked"
   | "changeVideo"
   | "updateVideoURL"
   | "updateVideoState";

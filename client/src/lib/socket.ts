@@ -1,5 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import { useRoomStore } from "@/store/useRoomStore";
+import { toast } from "react-toastify";
 
 const {
   setConnected,
@@ -7,13 +8,18 @@ const {
   addMessage,
   setVideoURL,
   setVideoState,
-  resetState,
   setRoomDetails,
 } = useRoomStore.getState();
 
 const socket: Socket = io("http://localhost:8081", {
   autoConnect: false,
 });
+
+let onUserKickedCallback: (() => void) | null = null;
+
+export const onUserKicked = (callback: () => void) => {
+  onUserKickedCallback = callback;
+};
 
 socket.on("connect", () => {
   console.log(`Connected to server!`);
@@ -64,6 +70,13 @@ socket.on("error", (error) => {
   console.log("Server error: ", error);
 
   addMessage({ type: "error", text: error.error });
+});
+
+socket.on("kicked", (message) => {
+  toast.error(message);
+  if (onUserKickedCallback) {
+    onUserKickedCallback();
+  }
 });
 
 export const joinRoom = (
@@ -136,4 +149,12 @@ export const sendChatMessage = (message: Message) => {
 
 export const leaveRoom = () => {
   socket.emit("leave-room");
+};
+
+export const kickUser = (
+  username: string,
+  userToKick: string,
+  roomId: string,
+) => {
+  socket.emit("kickUser", { username, userToKick, roomId });
 };
